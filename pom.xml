@@ -24,6 +24,8 @@
         <protobuf.version>3.25.1</protobuf.version>
         <protobuf-plugin.version>0.6.1</protobuf-plugin.version>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
+        <playwright.version>1.49.0</playwright.version>
+        <commons-io.version>2.15.1</commons-io.version>
     </properties>
 
     <modules>

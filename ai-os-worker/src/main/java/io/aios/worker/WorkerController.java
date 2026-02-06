@@ -26,12 +26,18 @@ public class WorkerController {
                     request.getArgumentsMap()
             );
 
-            String resultJson = result instanceof String ? (String) result : objectMapper.writeValueAsString(result);
+            ScriptResponse.Builder builder = ScriptResponse.newBuilder().setSuccess(true);
 
-            return ScriptResponse.newBuilder()
-                    .setSuccess(true)
-                    .setResultJson(resultJson)
-                    .build();
+            if (result instanceof byte[]) {
+                builder.setArtifactData(com.google.protobuf.ByteString.copyFrom((byte[]) result));
+                builder.setArtifactMimeType("application/octet-stream");
+                builder.setResultJson("binary-data");
+            } else {
+                String resultJson = result instanceof String ? (String) result : objectMapper.writeValueAsString(result);
+                builder.setResultJson(resultJson);
+            }
+
+            return builder.build();
         } catch (Exception e) {
             log.error("Failed to execute script", e);
             return ScriptResponse.newBuilder()
