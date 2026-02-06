@@ -1,46 +1,40 @@
 package io.aios.kernel;
 
-import io.aios.shared.proto.ScriptResponse;
+import io.aios.kernel.model.AgentState;
+import io.aios.kernel.service.AgentOrchestrator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Profile("!test")
 public class KernelVerificationRunner implements CommandLineRunner {
 
-    private final WorkerClientService workerClientService;
+    private final AgentOrchestrator orchestrator;
 
     @Override
     public void run(String... args) {
-        log.info("Starting Kernel verification...");
+        log.info("Starting Kernel verification (Phase 4)...");
 
-        String groovyCode = 
-            "// AI Generated Code Simulation\n" +
-            "browser.navigate(\"https://example.com\")\n" +
-            "String title = browser.extractText(\"h1\")\n" +
-            "fs.write(\"result.txt\", \"Title found: \" + title)\n" +
-            "return \"Scraped: \" + title";
+        String goal = "Scrape the trending repository name from github.com/trending and save it to a file named 'trending.txt'.";
 
-        log.info("Sending task to Worker...");
         try {
-            ScriptResponse response = workerClientService.sendTask("test-phase2", groovyCode, "run", Collections.emptyMap())
-                    .block();
-            if (response != null && response.getSuccess()) {
-                log.info("Result received: {}", response.getResultJson());
-                if (!response.getArtifactData().isEmpty()) {
-                    log.info("Artifact received: {} bytes, MIME type: {}", 
-                        response.getArtifactData().size(), response.getArtifactMimeType());
-                }
+            AgentState result = orchestrator.runGoal(goal, state -> {
+                log.info("PROGRESS: {}", state.getExecutionHistory().get(state.getExecutionHistory().size() - 1));
+            });
+
+            if (result.isSolved()) {
+                log.info("Goal successfully solved!");
+                log.info("Result: {}", result.getFinalResult());
             } else {
-                log.error("Execution failed: {}", response != null ? response.getErrorMessage() : "No response");
+                log.error("Agent failed to solve the goal.");
             }
         } catch (Exception e) {
-            log.error("Communication error: ", e);
+            log.error("Error during verification", e);
         }
     }
 }
