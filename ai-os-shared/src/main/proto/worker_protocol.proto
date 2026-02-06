@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package io.aios.shared.proto;
+
+option java_multiple_files = true;
+option java_package = "io.aios.shared.proto";
+option java_outer_classname = "WorkerProtocolProto";
+
+message ScriptRequest {
+  string scriptId = 1;
+  string groovyCode = 2;
+  string methodName = 3;
+  map<string, string> arguments = 4;
+}
+
+message ScriptResponse {
+  bool success = 1;
+  string resultJson = 2;
+  string logs = 3;
+  string errorMessage = 4;
+}
