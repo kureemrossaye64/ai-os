@@ -18,4 +18,6 @@ message ScriptResponse {
   string resultJson = 2;
   string logs = 3;
   string errorMessage = 4;
+  bytes artifactData = 5;
+  string artifactMimeType = 6;
 }
