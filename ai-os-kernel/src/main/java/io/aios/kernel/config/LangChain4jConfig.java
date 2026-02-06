@@ -8,6 +8,7 @@ import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.service.AiServices;
 import io.aios.kernel.service.AiArchitect;
+import io.aios.kernel.service.AgentAiService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,14 @@ public class LangChain4jConfig {
     @Profile("!test")
     public AiArchitect aiArchitect(ChatLanguageModel chatLanguageModel) {
         return AiServices.builder(AiArchitect.class)
+                .chatLanguageModel(chatLanguageModel)
+                .build();
+    }
+
+    @Bean
+    @Profile("!test")
+    public AgentAiService agentAiService(ChatLanguageModel chatLanguageModel) {
+        return AiServices.builder(AgentAiService.class)
                 .chatLanguageModel(chatLanguageModel)
                 .build();
     }

@@ -6,6 +6,7 @@ import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2Embedding
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import io.aios.kernel.service.AiArchitect;
+import io.aios.kernel.service.AgentAiService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -29,6 +30,14 @@ public class TestConfig {
     @Primary
     public EmbeddingModel embeddingModel() {
         return new AllMiniLmL6V2EmbeddingModel();
+    }
+
+    @Bean
+    @Primary
+    public AgentAiService agentAiService() {
+        AgentAiService mock = mock(AgentAiService.class);
+        when(mock.generateCode(anyString())).thenReturn("return 'success'");
+        return mock;
     }
 
     @Bean
